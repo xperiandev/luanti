@@ -27,7 +27,7 @@ jobs:
             ninja-build \
             pkg-config \
             gettext \
-            libsd12-dev \
+            libsdl2-dev \
             libirrlicht-dev \
             libbz2-dev \
             libjpeg-dev \

@@ -28,6 +28,7 @@ jobs:
             pkg-config \
             gettext \
             libsdl2-dev \
+            libzstd-dev \
             libirrlicht-dev \
             libbz2-dev \
             libjpeg-dev \

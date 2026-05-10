@@ -25,7 +25,6 @@ jobs:
             build-essential \
             cmake \
             ninja-build \
-            cpack \
             pkg-config \
             gettext \
             libirrlicht-dev \

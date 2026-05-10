@@ -1,0 +1,77 @@
+name: Build Luanti Debian Package
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: debian:bookworm
+
+    steps:
+      - name: Install dependencies
+        run: |
+          apt-get update
+
+          DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            git \
+            build-essential \
+            cmake \
+            ninja-build \
+            cpack \
+            pkg-config \
+            gettext \
+            libirrlicht-dev \
+            libbz2-dev \
+            libjpeg-dev \
+            libxxf86vm-dev \
+            libgl1-mesa-dev \
+            libsqlite3-dev \
+            libhiredis-dev \
+            libogg-dev \
+            libgmp-dev \
+            libvorbis-dev \
+            libopenal-dev \
+            libcurl4-openssl-dev \
+            libfreetype6-dev \
+            zlib1g-dev \
+            libluajit-5.1-dev
+
+      - name: Clone Luanti
+        run: |
+          git clone --depth 1 https://github.com/luanti-org/luanti.git
+          cd luanti
+
+      - name: Configure
+        run: |
+          cd luanti
+
+          cmake -B build \
+            -G Ninja \
+            -DRUN_IN_PLACE=FALSE \
+            -DBUILD_CLIENT=TRUE \
+            -DBUILD_SERVER=TRUE \
+            -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: |
+          cd luanti
+          cmake --build build -j$(nproc)
+
+      - name: Create Debian package
+        run: |
+          cd luanti/build
+          cpack -G DEB
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: luanti-debian-package
+          path: luanti/build/*.deb
